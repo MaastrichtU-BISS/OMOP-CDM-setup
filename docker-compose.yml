@@ -1,0 +1,29 @@
+version: "3"
+services:
+    postgres:
+        image: postgres
+        restart: unless-stopped
+        networks: 
+            omop: {}
+        environment:
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=postgres
+        volumes:
+            - omop_db_storage:/var/lib/postgresql/data
+            - ./install_db:/install_db
+        ports:
+            - 5432:5432
+    pgadmin:
+        image: dpage/pgadmin4
+        restart: unless-stopped
+        networks:
+            omop: {}
+        environment:
+            - PGADMIN_DEFAULT_EMAIL=admin@omop.tld
+            - PGADMIN_DEFAULT_PASSWORD=1234567890
+        ports:
+            - 5555:80
+networks:
+    omop:
+volumes:
+    omop_db_storage:
