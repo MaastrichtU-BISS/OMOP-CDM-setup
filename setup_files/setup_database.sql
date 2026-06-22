@@ -11,5 +11,5 @@ GRANT ALL PRIVILEGES ON DATABASE omop TO postgres;
 
 -- load indexes and constraints
 \i /install_db/01_structure/omop_indexes.sql;
-
+\i /install_db/01_structure/omop_primary_keys.sql;
 \i /install_db/01_structure/omop_constraints.sql;
