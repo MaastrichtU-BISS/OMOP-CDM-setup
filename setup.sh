@@ -24,9 +24,16 @@ mkdir 02_terminologies
 cd 02_terminologies
 
 ## Download and extract the omop terminology zip (from my own hosting, as OMOP doesn't give a default zip)
-#curl -o omop_terminology_package.zip https://jvsoest.eu/omop_terminology_package.zip
-#unzip omop_terminology_package.zip
-#cp ../../setup_files/load_terms.sql ./
+FILE="omop_terminology_package.zip"
+if [ ! -f "$FILE" ]; then
+    #curl -o omop_terminology_package.zip https://jvsoest.eu/omop_terminology_package.zip
+    curl -fL --retry 3 \
+        -o $FILE \
+        "https://surfdrive.surf.nl/s/syJN2z2XaR5eMmM/download"
+fi
+
+unzip omop_terminology_package.zip
+cp ../../setup_files/load_terms.sql ./
 
 # setup docker images
 docker-compose up -d
