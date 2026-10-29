@@ -1,17 +1,42 @@
 services:
     postgres:
-        image: postgres
+        image: postgres:18
         restart: unless-stopped
-        networks: 
+        networks:
             omop: {}
         environment:
             - POSTGRES_USER=postgres
-            - POSTGRES_PASSWORD=postgres
+            - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
         volumes:
             - omop_db_storage:/var/lib/postgresql
-            - ./install_db:/install_db
+            # Vocabulary files are loaded with server side COPY statements
+            - omop_install:/install_db:ro
         ports:
             - 5432:5432
+        healthcheck:
+            test: ["CMD", "pg_isready", "-U", "postgres"]
+            interval: 5s
+            timeout: 5s
+            retries: 20
+    omop-init:
+        build: ./docker/omop-tools
+        image: omop-tools:local
+        networks:
+            omop: {}
+        environment:
+            - PGHOST=postgres
+            - PGUSER=postgres
+            - PGPASSWORD=${POSTGRES_PASSWORD:-postgres}
+            - VOCAB_URL=${VOCAB_URL:-https://surfdrive.surf.nl/s/syJN2z2XaR5eMmM/download}
+            - DQD_PASSWORD=${DQD_PASSWORD:-dqd}
+            - SUPERSET_DB_PASSWORD=${SUPERSET_DB_PASSWORD:-superset}
+            - SUPERSET_READER_PASSWORD=${SUPERSET_READER_PASSWORD:-superset_reader}
+        volumes:
+            - omop_install:/install_db
+            - ./setup_files:/setup_files:ro
+        depends_on:
+            postgres:
+                condition: service_healthy
     pgadmin:
         image: dpage/pgadmin4
         restart: unless-stopped
@@ -38,3 +63,4 @@ networks:
     omop:
 volumes:
     omop_db_storage:
+    omop_install:
