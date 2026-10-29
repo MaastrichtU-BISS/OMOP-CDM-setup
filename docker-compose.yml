@@ -52,6 +52,27 @@ services:
         depends_on:
             omop-init:
                 condition: service_completed_successfully
+    dqd:
+        build: ./docker/dqd
+        image: omop-dqd:local
+        restart: unless-stopped
+        networks:
+            omop: {}
+        environment:
+            - DQD_DB_PASSWORD=${DQD_PASSWORD:-dqd}
+            - DQD_THREADS=${DQD_THREADS:-2}
+            # Cron expression for the scheduled runs (default: every night at 02:00 UTC)
+            - DQD_SCHEDULE=${DQD_SCHEDULE:-0 2 * * *}
+            - DQD_RUN_ON_START=${DQD_RUN_ON_START:-true}
+        volumes:
+            - dqd_output:/output
+        depends_on:
+            omop-init:
+                condition: service_completed_successfully
+            # Only when the demo profile is active
+            seed:
+                condition: service_completed_successfully
+                required: false
     pgadmin:
         image: dpage/pgadmin4
         restart: unless-stopped
@@ -79,3 +100,4 @@ networks:
 volumes:
     omop_db_storage:
     omop_install:
+    dqd_output:
