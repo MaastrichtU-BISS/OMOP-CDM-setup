@@ -1,2 +1,2 @@
-docker compose down
-docker volume rm $(docker compose volumes -q)
+# Stop all services and remove all data (database, downloads, DQD output and Superset)
+docker compose --profile demo down -v
