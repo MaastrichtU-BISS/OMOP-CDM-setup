@@ -20,8 +20,8 @@ To launch the webinterface, go to [http://localhost:5555](http://localhost:5555)
 * Username: admin@omop.tld
 * Password: 1234567890
 
-Afterwards, add the postgres database server (Servers -> right-click "Create" -> "Server"). Use the following information to make the server connnection:
-* hostname: postgres
+The postgres database server is preconfigured as "OMOP" (under "Servers"), including its credentials (see [setup_files/pgadmin](./setup_files/pgadmin)). For other clients, use the following connection information:
+* hostname: postgres (or localhost:5432 from the host machine)
 * username: postgres
 * password: postgres
 

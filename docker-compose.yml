@@ -20,6 +20,18 @@ services:
         environment:
             - PGADMIN_DEFAULT_EMAIL=admin@omop.tld
             - PGADMIN_DEFAULT_PASSWORD=1234567890
+            - PGADMIN_SERVER_JSON_FILE=/pgadmin_config/servers.json
+        volumes:
+            - ./setup_files/pgadmin:/pgadmin_config:ro
+        # Copy the password file into the user's storage directory (admin@omop.tld -> admin_omop.tld),
+        # as libpq requires it to be owned by the pgadmin user with 0600 permissions
+        entrypoint: >
+            /bin/sh -c "mkdir -p /var/lib/pgadmin/storage/admin_omop.tld &&
+            cp /pgadmin_config/pgpass /var/lib/pgadmin/storage/admin_omop.tld/pgpass &&
+            chmod 600 /var/lib/pgadmin/storage/admin_omop.tld/pgpass &&
+            exec /entrypoint.sh"
+        depends_on:
+            - postgres
         ports:
             - 5555:80
 networks:
