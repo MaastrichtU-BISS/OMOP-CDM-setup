@@ -36,9 +36,9 @@ unzip omop_terminology_package.zip
 cp ../../setup_files/load_terms.sql ./
 
 # setup docker images
-docker-compose up -d
+docker compose up -d
 
 sleep 5
 
 # Install database
-docker-compose exec postgres psql -U postgres -f /install_db/setup_database.sql
+docker compose exec postgres psql -U postgres -f /install_db/setup_database.sql
