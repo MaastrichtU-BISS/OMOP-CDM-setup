@@ -37,6 +37,21 @@ services:
         depends_on:
             postgres:
                 condition: service_healthy
+    seed:
+        image: omop-tools:local
+        profiles: [demo]
+        command: ["seed.sh"]
+        networks:
+            omop: {}
+        environment:
+            - PGHOST=postgres
+            - PGUSER=postgres
+            - PGPASSWORD=${POSTGRES_PASSWORD:-postgres}
+        volumes:
+            - omop_install:/install_db
+        depends_on:
+            omop-init:
+                condition: service_completed_successfully
     pgadmin:
         image: dpage/pgadmin4
         restart: unless-stopped
